@@ -15,8 +15,11 @@ class TelegramBot
 
     private BotMan $bot;
 
-    public function __construct(string $token, string $channel, string $admin)
-    {
+    public function __construct(
+        string $token,
+        string $channel,
+        string $admin
+    ) {
         $this->channel = $channel;
         $this->admin = $admin;
 
@@ -44,7 +47,10 @@ class TelegramBot
 
         $this->bot->fallback(function (BotMan $bot) {
             $bot->reply('Дякую за Ваше повідомлення');
-            $bot->say(json_encode($bot->getMessage()->getPayload(), JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE), $this->admin);
+            $bot->say(json_encode(
+                $bot->getMessage()->getPayload(),
+                JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE
+            ), $this->admin);
         });
 
         $this->bot->listen();
