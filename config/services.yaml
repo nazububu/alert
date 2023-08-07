@@ -15,3 +15,8 @@ services:
     App\Controller\WebhookController:
         arguments:
             $logger: '@monolog.logger.webhook'
+
+    App\Service\TelegramBot:
+        arguments:
+            $token: "%env(resolve:BOT_TOKEN)%"
+            $recipient: "%env(resolve:CHANNEL_ID)%"
