@@ -19,4 +19,5 @@ services:
     App\Service\TelegramBot:
         arguments:
             $token: "%env(resolve:BOT_TOKEN)%"
-            $recipient: "%env(resolve:CHANNEL_ID)%"
+            $channel: "%env(resolve:CHANNEL_ID)%"
+            $admin: "%env(resolve:ADMIN_ID)%"

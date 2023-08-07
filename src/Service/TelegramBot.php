@@ -9,13 +9,16 @@ use BotMan\Drivers\Telegram\TelegramDriver;
 
 class TelegramBot
 {
-    private string $recipient;
+    private string $channel;
+
+    private string $admin;
 
     private BotMan $bot;
 
-    public function __construct(string $token, string $recipient)
+    public function __construct(string $token, string $channel, string $admin)
     {
-        $this->recipient = $recipient;
+        $this->channel = $channel;
+        $this->admin = $admin;
 
         DriverManager::loadDriver(TelegramDriver::class);
 
@@ -28,6 +31,27 @@ class TelegramBot
 
     public function notify(string $message): void
     {
-        $this->bot->say($message, $this->recipient, TelegramDriver::class);
+        $this->send($this->channel, $message);
+    }
+
+    public function handle(): void
+    {
+        $this->bot->hears('/start', static function (BotMan $bot) {
+            $msg = 'Привіт. Я бот каналу "Сирена Кременчук';
+            $msg .= 'Якщо у Вас є питання чи пропозиції з покращення - напишіть, будь ласка, повідомлення, залиште контакти і адміністратор зв\'яжеться з Вами за необхідності';
+            $bot->reply($msg);
+        });
+
+        $this->bot->fallback(function (BotMan $bot) {
+            $bot->reply('Дякую за Ваше повідомлення');
+            $bot->say(json_encode($bot->getMessage()->getPayload(), JSON_PRETTY_PRINT), $this->admin);
+        });
+
+        $this->bot->listen();
+    }
+
+    private function send(string $recipient, string $message): void
+    {
+        $this->bot->say($message, $recipient, TelegramDriver::class);
     }
 }
