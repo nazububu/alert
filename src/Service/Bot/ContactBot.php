@@ -28,7 +28,11 @@ class ContactBot extends BaseBot
             $botMan->reply('Дякую за Ваше повідомлення');
 
             $this->botMan->say(
-                $botMan->getUser()->getUsername(),
+                sprintf(
+                    "%s\r\n%s",
+                    $botMan->getUser()->getUsername(),
+                    $botMan->getMessage()->getText()
+                ),
                 $this->recipient
             );
         });
