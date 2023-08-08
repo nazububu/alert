@@ -6,15 +6,12 @@ use BotMan\BotMan\BotMan;
 use BotMan\BotMan\BotManFactory;
 use BotMan\BotMan\Drivers\DriverManager;
 use BotMan\Drivers\Telegram\TelegramDriver;
-use Psr\Log\LoggerInterface;
 
 class TelegramBot
 {
     private string $channel;
 
     private string $admin;
-
-    private LoggerInterface $logger;
 
     private Serializer $serializer;
 
@@ -24,7 +21,6 @@ class TelegramBot
         string $token,
         string $channel,
         string $admin,
-        LoggerInterface $logger,
         Serializer $serializer
     ) {
         $this->channel = $channel;
@@ -38,7 +34,6 @@ class TelegramBot
             ],
         ]);
 
-        $this->logger = $logger;
         $this->serializer = $serializer;
     }
 
@@ -54,28 +49,17 @@ class TelegramBot
             $msg .= 'Якщо у Вас є питання чи пропозиції з покращення - напишіть, будь ласка, повідомлення, залиште контакти і адміністратор зв\'яжеться з Вами за необхідності';
 
             $bot->reply($msg);
-
-            $this->logger->info(
-                $this->serializer->serialize([
-                    'user'    => $bot->getUser()->getUsername(),
-                    'message' => $bot->getMessage()->getPayload(),
-                ])
-            );
         });
 
         $this->bot->fallback(function (BotMan $bot) {
-            $this->logger->info(
+            $bot->reply('Дякую за Ваше повідомлення');
+            $bot->say(
                 $this->serializer->serialize([
-//                    'user'    => $bot->getUser()->getUsername(),
-                    'message' => $bot->getMessage()->getPayload(),
-                ])
+                    'user'    => $bot->getUser()->getUsername(),
+                    'message' => $bot->getMessage()->getText(),
+                ]),
+                $this->admin
             );
-
-//            $bot->reply('Дякую за Ваше повідомлення');
-//            $bot->say(json_encode(
-//                $bot->getMessage()->getPayload(),
-//                JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE
-//            ), $this->admin);
         });
 
         $this->bot->listen();

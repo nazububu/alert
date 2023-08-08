@@ -18,7 +18,6 @@ services:
 
     App\Service\TelegramBot:
         arguments:
-            $logger: '@monolog.logger.webhook'
             $token: "%env(resolve:BOT_TOKEN)%"
             $channel: "%env(resolve:CHANNEL_ID)%"
             $admin: "%env(resolve:ADMIN_ID)%"
