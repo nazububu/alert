@@ -66,7 +66,7 @@ class TelegramBot
         $this->bot->fallback(function (BotMan $bot) {
             $this->logger->info(
                 $this->serializer->serialize([
-                    'user'    => $bot->getUser()->getUsername(),
+//                    'user'    => $bot->getUser()->getUsername(),
                     'message' => $bot->getMessage()->getPayload(),
                 ])
             );
