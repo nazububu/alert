@@ -25,6 +25,8 @@ class ContactBot extends BaseBot
         });
 
         $this->botMan->fallback(function (BotMan $botMan) {
+            $botMan->reply('Дякую за Ваше повідомлення');
+
             $this->botMan->say(
                 $botMan->getUser()->getUsername(),
                 $this->recipient
