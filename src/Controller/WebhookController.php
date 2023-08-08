@@ -42,7 +42,7 @@ class WebhookController extends AbstractController
         ) {
             $message = $this->messageComposer->composeMessage(
                 $request->getPayload()->get('status'),
-                $request->getPayload()->get('type')
+                $request->getPayload()->get('alarmType')
             );
 
             $this->telegramBot->notify($message);
