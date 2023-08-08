@@ -1,13 +1,19 @@
 monolog:
     channels:
         - deprecation # Deprecations are logged in the dedicated "deprecation" channel when it exists
-        - webhook
+        - alert
+        - contact
     handlers:
-        webhook:
+        alert:
             type: rotating_file
-            path: "%kernel.logs_dir%/webhook.log"
+            path: "%kernel.logs_dir%/alert.log"
             level: info
-            channels: webhook
+            channels: alert
+        contact:
+            type: rotating_file
+            path: "%kernel.logs_dir%/contact.log"
+            level: info
+            channels: contact
 
 when@dev:
     monolog:

@@ -14,7 +14,8 @@ services:
 
     App\Controller\WebhookController:
         arguments:
-            $logger: '@monolog.logger.webhook'
+            $alertLogger: '@monolog.logger.alert'
+            $contactLogger: '@monolog.logger.contact'
 
     App\Service\Bot\AlertBot:
         arguments:

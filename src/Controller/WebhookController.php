@@ -19,7 +19,9 @@ class WebhookController extends AbstractController
 
     private Serializer $serializer;
 
-    private LoggerInterface $logger;
+    private LoggerInterface $alertLogger;
+
+    private LoggerInterface $contactLogger;
 
     private MessageComposer $messageComposer;
 
@@ -29,13 +31,15 @@ class WebhookController extends AbstractController
 
     public function __construct(
         Serializer $serializer,
-        LoggerInterface $logger,
+        LoggerInterface $alertLogger,
+        LoggerInterface $contactLogger,
         MessageComposer $messageComposer,
         AlertBot $alertBot,
         ContactBot $contactBot
     ) {
         $this->serializer = $serializer;
-        $this->logger = $logger;
+        $this->alertLogger = $alertLogger;
+        $this->contactLogger = $contactLogger;
         $this->messageComposer = $messageComposer;
         $this->alertBot = $alertBot;
         $this->contactBot = $contactBot;
@@ -44,7 +48,7 @@ class WebhookController extends AbstractController
     #[Route(path: 'alert', name: 'alert')]
     public function alert(Request $request): JsonResponse
     {
-        $this->logger->info($this->serializer->serialize($request->toArray()));
+        $this->alertLogger->info($this->serializer->serialize($request->toArray()));
 
         if (
             $request->getPayload()->get('regionId')
@@ -56,16 +60,16 @@ class WebhookController extends AbstractController
             );
 
             $this->alertBot->notify($message);
-
-            $this->logger->info($this->serializer->serialize(['message' => $message]));
         }
 
         return new JsonResponse();
     }
 
     #[Route(path: 'telegram', name: 'telegram')]
-    public function telegram(): JsonResponse
+    public function telegram(Request $request): JsonResponse
     {
+        $this->contactLogger->info($this->serializer->serialize($request->toArray()));
+
         $this->contactBot->listen();
 
         return new JsonResponse(['message' => 'okay']);
