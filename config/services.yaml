@@ -18,11 +18,11 @@ services:
 
     App\Service\Bot\AlertBot:
         arguments:
-            $recipient: '%env(resolve:CHANNEL_ID)%'
             $token: '%env(resolve:ALERT_BOT_TOKEN)%'
+            $recipient: '%env(resolve:CHANNEL_ID)%'
 
     App\Service\Bot\ContactBot:
         arguments:
-            $recipient: '%env(resolve:ADMIN_ID)%'
             $token: '%env(resolve:CONTACT_BOT_TOKEN)%'
+            $recipient: '%env(resolve:ADMIN_ID)%'
 
