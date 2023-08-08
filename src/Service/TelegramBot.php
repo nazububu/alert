@@ -46,7 +46,7 @@ class TelegramBot
         });
 
         $this->bot->fallback(function (BotMan $bot) {
-            $bot->reply('Дякую за Ваше повідомлення');
+//            $bot->reply('Дякую за Ваше повідомлення');
             $bot->say(json_encode(
                 $bot->getMessage()->getPayload(),
                 JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE
