@@ -36,7 +36,7 @@ class WebhookController extends AbstractController
         $this->telegramBot = $telegramBot;
     }
 
-    #[Route(path: 'alert', name: 'alert', methods: ['POST'])]
+    #[Route(path: 'alert', name: 'alert')]
     public function alert(Request $request): JsonResponse
     {
         $this->logger->info($this->serializer->serialize($request->toArray()));
@@ -58,7 +58,7 @@ class WebhookController extends AbstractController
         return new JsonResponse();
     }
 
-    #[Route(path: 'telegram', name: 'telegram', methods: ['POST'])]
+    #[Route(path: 'telegram', name: 'telegram')]
     public function telegram(): JsonResponse
     {
         $this->telegramBot->handle();
