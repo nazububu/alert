@@ -61,9 +61,11 @@ class WebhookController extends AbstractController
     #[Route(path: 'telegram', name: 'telegram')]
     public function telegram(Request $request): JsonResponse
     {
-        $this->logger->info($this->serializer->serialize($request->toArray()));
+        if (!$request->getPayload()->has('channel_post')) {
+            $this->telegramBot->handle();
+        }
 
-        $this->telegramBot->handle();
+        $this->logger->info($this->serializer->serialize($request->toArray()));
 
         return new JsonResponse(['message' => 'okay']);
     }
