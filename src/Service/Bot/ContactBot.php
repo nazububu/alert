@@ -26,7 +26,7 @@ class ContactBot extends BaseBot
 
         $this->botMan->fallback(function (BotMan $botMan) {
             $this->botMan->say(
-                $botMan->getMessage()->getPayload(),
+                $botMan->getMessage()->getText(),
                 $this->recipient
             );
         });
