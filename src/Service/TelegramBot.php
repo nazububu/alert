@@ -6,6 +6,7 @@ use BotMan\BotMan\BotMan;
 use BotMan\BotMan\BotManFactory;
 use BotMan\BotMan\Drivers\DriverManager;
 use BotMan\Drivers\Telegram\TelegramDriver;
+use Psr\Log\LoggerInterface;
 
 class TelegramBot
 {
@@ -13,12 +14,18 @@ class TelegramBot
 
     private string $admin;
 
+    private LoggerInterface $logger;
+
+    private Serializer $serializer;
+
     private BotMan $bot;
 
     public function __construct(
         string $token,
         string $channel,
-        string $admin
+        string $admin,
+        LoggerInterface $logger,
+        Serializer $serializer
     ) {
         $this->channel = $channel;
         $this->admin = $admin;
@@ -30,6 +37,9 @@ class TelegramBot
                 'token' => $token,
             ],
         ]);
+
+        $this->logger = $logger;
+        $this->serializer = $serializer;
     }
 
     public function notify(string $message): void
@@ -39,18 +49,33 @@ class TelegramBot
 
     public function handle(): void
     {
-        $this->bot->hears('/start', static function (BotMan $bot) {
+        $this->bot->hears('/start', function (BotMan $bot) {
             $msg = 'Привіт. Я бот каналу "Сирена Кременчук';
             $msg .= 'Якщо у Вас є питання чи пропозиції з покращення - напишіть, будь ласка, повідомлення, залиште контакти і адміністратор зв\'яжеться з Вами за необхідності';
+
             $bot->reply($msg);
+
+            $this->logger->info(
+                $this->serializer->serialize([
+                    'user'    => $bot->getUser(),
+                    'message' => $bot->getMessage()->getPayload(),
+                ])
+            );
         });
 
         $this->bot->fallback(function (BotMan $bot) {
+            $this->logger->info(
+                $this->serializer->serialize([
+                    'user'    => $bot->getUser(),
+                    'message' => $bot->getMessage()->getPayload(),
+                ])
+            );
+
 //            $bot->reply('Дякую за Ваше повідомлення');
-            $bot->say(json_encode(
-                $bot->getMessage()->getPayload(),
-                JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE
-            ), $this->admin);
+//            $bot->say(json_encode(
+//                $bot->getMessage()->getPayload(),
+//                JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE
+//            ), $this->admin);
         });
 
         $this->bot->listen();

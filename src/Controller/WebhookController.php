@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Service\MessageComposer;
+use App\Service\Serializer;
 use App\Service\TelegramBot;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,6 +16,8 @@ class WebhookController extends AbstractController
 {
     private array $monitoringRegions = [19, 107];
 
+    private Serializer $serializer;
+
     private LoggerInterface $logger;
 
     private MessageComposer $messageComposer;
@@ -22,10 +25,12 @@ class WebhookController extends AbstractController
     private TelegramBot $telegramBot;
 
     public function __construct(
+        Serializer $serializer,
         LoggerInterface $logger,
         MessageComposer $messageComposer,
         TelegramBot $telegramBot
     ) {
+        $this->serializer = $serializer;
         $this->logger = $logger;
         $this->messageComposer = $messageComposer;
         $this->telegramBot = $telegramBot;
@@ -34,7 +39,7 @@ class WebhookController extends AbstractController
     #[Route(path: 'alert', name: 'alert', methods: ['POST'])]
     public function alert(Request $request): JsonResponse
     {
-        $this->logger->info('Request: ' . json_encode($request->toArray()));
+        $this->logger->info($this->serializer->serialize($request->toArray()));
 
         if (
             $request->getPayload()->get('regionId')
@@ -47,7 +52,7 @@ class WebhookController extends AbstractController
 
             $this->telegramBot->notify($message);
 
-            $this->logger->info('Notification: ' . $message);
+            $this->logger->info($this->serializer->serialize(['message' => $message]));
         }
 
         return new JsonResponse();
