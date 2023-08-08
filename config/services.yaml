@@ -16,8 +16,13 @@ services:
         arguments:
             $logger: '@monolog.logger.webhook'
 
-    App\Service\TelegramBot:
+    App\Service\Bot\AlertBot:
         arguments:
-            $token: "%env(resolve:BOT_TOKEN)%"
-            $channel: "%env(resolve:CHANNEL_ID)%"
-            $admin: "%env(resolve:ADMIN_ID)%"
+            $recipient: '%env(resolve:CHANNEL_ID)%'
+            $token: '%env(resolve:ALERT_BOT_TOKEN)%'
+
+    App\Service\Bot\ContactBot:
+        arguments:
+            $recipient: '%env(resolve:ADMIN_ID)%'
+            $token: '%env(resolve:CONTACT_BOT_TOKEN)%'
+

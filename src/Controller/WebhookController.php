@@ -2,9 +2,10 @@
 
 namespace App\Controller;
 
+use App\Service\Bot\AlertBot;
+use App\Service\Bot\ContactBot;
 use App\Service\MessageComposer;
 use App\Service\Serializer;
-use App\Service\TelegramBot;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -22,18 +23,22 @@ class WebhookController extends AbstractController
 
     private MessageComposer $messageComposer;
 
-    private TelegramBot $telegramBot;
+    private AlertBot $alertBot;
+
+    private ContactBot $contactBot;
 
     public function __construct(
         Serializer $serializer,
         LoggerInterface $logger,
         MessageComposer $messageComposer,
-        TelegramBot $telegramBot
+        AlertBot $alertBot,
+        ContactBot $contactBot
     ) {
         $this->serializer = $serializer;
         $this->logger = $logger;
         $this->messageComposer = $messageComposer;
-        $this->telegramBot = $telegramBot;
+        $this->alertBot = $alertBot;
+        $this->contactBot = $contactBot;
     }
 
     #[Route(path: 'alert', name: 'alert')]
@@ -50,7 +55,7 @@ class WebhookController extends AbstractController
                 $request->getPayload()->get('alarmType')
             );
 
-            $this->telegramBot->notify($message);
+            $this->alertBot->notify($message);
 
             $this->logger->info($this->serializer->serialize(['message' => $message]));
         }
@@ -59,13 +64,9 @@ class WebhookController extends AbstractController
     }
 
     #[Route(path: 'telegram', name: 'telegram')]
-    public function telegram(Request $request): JsonResponse
+    public function telegram(): JsonResponse
     {
-        if (!$request->getPayload()->get('channel_post', false)) {
-            $this->telegramBot->handle();
-        }
-
-        $this->logger->info($this->serializer->serialize($request->toArray()));
+        $this->contactBot->listen();
 
         return new JsonResponse(['message' => 'okay']);
     }
