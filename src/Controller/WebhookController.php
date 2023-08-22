@@ -29,13 +29,16 @@ class WebhookController extends AbstractController
 
     private ContactBot $contactBot;
 
+    private string $alarmKey;
+
     public function __construct(
         Serializer $serializer,
         LoggerInterface $alertLogger,
         LoggerInterface $contactLogger,
         MessageComposer $messageComposer,
         AlertBot $alertBot,
-        ContactBot $contactBot
+        ContactBot $contactBot,
+        string $alarmKey
     ) {
         $this->serializer = $serializer;
         $this->alertLogger = $alertLogger;
@@ -43,12 +46,17 @@ class WebhookController extends AbstractController
         $this->messageComposer = $messageComposer;
         $this->alertBot = $alertBot;
         $this->contactBot = $contactBot;
+        $this->alarmKey = $alarmKey;
     }
 
     #[Route(path: 'alert', name: 'alert')]
     public function alert(Request $request): JsonResponse
     {
         $this->alertLogger->info($this->serializer->serialize($request->toArray()));
+
+        if ($request->query->get('key', null) !== $this->alarmKey) {
+            return new JsonResponse(['message' => 'no key provided']);
+        }
 
         if (
             $request->getPayload()->get('regionId')

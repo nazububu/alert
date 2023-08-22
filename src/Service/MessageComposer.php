@@ -40,7 +40,7 @@ class MessageComposer
         ],
 
         self::TYPE_NUCLEAR => [
-            self::STATUS_ACTIVATION   => "🔴 УВАГА! РАДІАЦІЙНА НЕБЕЗПЕКА\r\n\r\n🔴 ВСІ В УКРИТТЯ!",
+            self::STATUS_ACTIVATION   => "☢️ УВАГА! РАДІАЦІЙНА НЕБЕЗПЕКА\r\n\r\n☢️ ВСІ В УКРИТТЯ!",
             self::STATUS_DEACTIVATION => "🟢 УВАГА! Відбій радіаційної небезпеки!\r\n\r\n🟢 Можна виходити в укриття",
         ],
     ];
