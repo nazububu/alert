@@ -14,6 +14,7 @@ services:
 
     App\Controller\WebhookController:
         arguments:
+            $alarmKey: '%env(resolve:ALARM_KEY)%'
             $alertLogger: '@monolog.logger.alert'
             $contactLogger: '@monolog.logger.contact'
 
