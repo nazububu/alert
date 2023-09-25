@@ -16,15 +16,7 @@ services:
         arguments:
             $alarmKey: '%env(resolve:ALARM_KEY)%'
             $alertLogger: '@monolog.logger.alert'
-            $contactLogger: '@monolog.logger.contact'
 
     App\Service\Bot\AlertBot:
         arguments:
             $token: '%env(resolve:ALERT_BOT_TOKEN)%'
-            $recipient: '%env(resolve:CHANNEL_ID)%'
-
-    App\Service\Bot\ContactBot:
-        arguments:
-            $token: '%env(resolve:CONTACT_BOT_TOKEN)%'
-            $recipient: '%env(resolve:ADMIN_ID)%'
-

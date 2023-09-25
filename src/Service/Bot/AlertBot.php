@@ -2,19 +2,28 @@
 
 namespace App\Service\Bot;
 
-class AlertBot extends BaseBot
+use BotMan\BotMan\BotMan;
+use BotMan\BotMan\BotManFactory;
+use BotMan\BotMan\Drivers\DriverManager;
+use BotMan\Drivers\Telegram\TelegramDriver;
+
+class AlertBot
 {
-    private string $recipient;
+    public BotMan $botMan;
 
-    public function __construct(string $token, string $recipient)
+    public function __construct(string $token)
     {
-        $this->recipient = $recipient;
+        DriverManager::loadDriver(TelegramDriver::class);
 
-        parent::__construct($token);
+        $this->botMan = BotManFactory::create([
+            'telegram' => [
+                'token' => $token,
+            ],
+        ]);
     }
 
-    public function notify(string $message)
+    public function notify(string $identifier, string $message)
     {
-        $this->send($message, $this->recipient);
+        $this->botMan->say($message, $identifier, TelegramDriver::class);
     }
 }

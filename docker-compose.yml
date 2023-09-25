@@ -8,20 +8,36 @@ services:
             - .docker/nginx/hosts/default.conf:/etc/nginx/conf.d/default.conf
         networks:
             alert:
-                ipv4_address: 192.168.100.4
+                ipv4_address: 192.168.235.4
         ports:
             - '80'
 
     app:
         build: .docker/app
         environment:
-            PHP_IDE_CONFIG: serverName=192.168.100.4
+            PHP_IDE_CONFIG: serverName=192.168.235.4
             APP_ENV: dev
         volumes:
             - ./:/var/www/html
         networks:
             alert:
-                ipv4_address: 192.168.100.2
+                ipv4_address: 192.168.235.2
+
+    mysql:
+        restart: always
+        image: mysql:8.0
+        environment:
+            MYSQL_ROOT_PASSWORD: 123456
+        volumes:
+            - mysql-data:/var/lib/mysql
+        networks:
+            alert:
+                ipv4_address: 192.168.235.6
+        ports:
+            - '3306'
+
+volumes:
+    mysql-data:
 
 networks:
     alert:
@@ -29,4 +45,4 @@ networks:
         driver: bridge
         ipam:
             config:
-                -   subnet: 192.168.100.0/24
+                -   subnet: 192.168.235.0/24
